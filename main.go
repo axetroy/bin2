@@ -143,5 +143,7 @@ func main() {
 		}
 	})
 
+	fmt.Printf("Listen on port %s\n", port)
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
