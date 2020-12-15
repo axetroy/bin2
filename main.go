@@ -128,7 +128,7 @@ func handler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func main() {
-	port := os.Getenv("port")
+	port := os.Getenv("PORT")
 
 	if port == "" {
 		port = "8080"
