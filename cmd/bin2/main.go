@@ -3,26 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/axetroy/bin2"
 )
-
-func isCurl(useragent string) bool {
-	return regexp.MustCompile(`^curl\/`).MatchString(useragent)
-}
-
-func isWget(useragent string) bool {
-	return regexp.MustCompile(`^Wget\/`).MatchString(useragent)
-}
-
-func isPowerShell(useragent string) bool {
-	return regexp.MustCompile(`PowerShell\/`).MatchString(useragent)
-}
 
 func getLatestRelease(owner string, repo string) (string, error) {
 	var (
@@ -76,14 +65,6 @@ func handler(w http.ResponseWriter, r *http.Request) error {
 
 	userAgent := r.Header.Get("user-agent")
 
-	filename := "install.sh"
-
-	if isCurl(userAgent) || isWget(userAgent) {
-		filename = "install.sh"
-	} else if isPowerShell(userAgent) {
-		filename = "install.ps1"
-	}
-
 	// If no version is specified, the latest version is used
 	if version == "" {
 		version, err = getLatestRelease(owner, repo)
@@ -93,36 +74,13 @@ func handler(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	if !strings.HasPrefix(version, "v") {
-		version = "v" + version
-	}
-
-	if binaryName == "" {
-		binaryName = repo
-	}
-
-	t := template.New(filename)
-
-	w.Header().Set("Content-Type", "text/x-shellscript")
-
-	b, err := ioutil.ReadFile(filename)
+	script, err := bin2.Generate(owner, repo, version, binaryName, userAgent)
 
 	if err != nil {
 		return err
 	}
 
-	t, err = t.Parse(string(b))
-
-	if err != nil {
-		return err
-	}
-
-	err = t.Execute(w, map[string]interface{}{
-		"Owner":   owner,
-		"Repo":    repo,
-		"Version": version,
-		"Binary":  binaryName,
-	})
+	_, err = w.Write([]byte(script.Content))
 
 	return err
 }

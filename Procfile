@@ -1,1 +1,1 @@
-web: ./bin/installation
+web: ./bin/bin2

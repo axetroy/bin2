@@ -5,21 +5,45 @@ owner="{{ .Owner }}"
 repo="{{ .Repo }}"
 version="{{ .Version }}"
 binary="{{ .Binary }}"
+
+# the file should be download to here
 downloadFolder="${HOME}/Downloads"
+# The executable file will finally be placed here
+binDir=/usr/local/bin
 
 mkdir -p ${downloadFolder}
 
 get_arch() {
+    # https://man7.org/linux/man-pages/man1/uname.1.html
+    # https://en.wikipedia.org/wiki/Uname
     a=$(uname -m)
     case ${a} in
-    "x86_64" | "amd64" )
-        echo "amd64"
+        "x86_64" | "amd64" | "i686-64" )
+            echo "amd64"
         ;;
-    "i386" | "i486" | "i586")
-        echo "386"
+        "i386" | "i686" | "i486" | "i586" | "i86pc" ｜ "x86pc")
+            echo "386"
         ;;
-    *)
-        echo ${NIL}
+        "arm32")
+            echo "arm32"
+        ;;
+        "arm64" | "aarch64")
+            echo "arm64"
+        ;;
+        "armv8")
+            echo "armv8"
+        ;;
+        "armv7" | "armv7l")
+            echo "armv7"
+        ;;
+        "armv6" | "armv6l" | "arm")
+            echo "armv6"
+        ;;
+        "armv5")
+            echo "armv5"
+        ;;
+        *)
+            echo ${NIL}
         ;;
     esac
 }
@@ -40,8 +64,6 @@ main() {
     echo "[1/3] Download ${asset_uri} to ${downloadFolder}"
     rm -f ${dest_file}
     curl --location --output "${dest_file}" "${asset_uri}"
-
-    binDir=/usr/local/bin
 
     echo "[2/3] Install '${binary}' to the ${binDir}"
     mkdir -p ${HOME}/bin
