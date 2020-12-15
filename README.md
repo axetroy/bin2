@@ -4,7 +4,9 @@ An online service that can help you easily install binary files.
 
 It is mainly aimed at Golang, of course other types are also available.
 
-> I am tired of writing how to install for so many CLI.
+> I am tired of writing installation guide for so many cli.
+>
+> I am trying to use this tool to solve it all at once
 
 WIP:
 
