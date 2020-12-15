@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -127,6 +128,12 @@ func handler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func main() {
+	port := os.Getenv("port")
+
+	if port == "" {
+		port = "8080"
+	}
+
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 		err := handler(res, req)
 
@@ -135,5 +142,5 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
