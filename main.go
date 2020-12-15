@@ -138,7 +138,8 @@ func main() {
 		err := handler(res, req)
 
 		if err != nil {
-			panic(err)
+			res.WriteHeader(http.StatusBadRequest)
+			_, _ = res.Write([]byte(err.Error()))
 		}
 	})
 
