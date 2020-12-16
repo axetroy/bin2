@@ -1,5 +1,4 @@
 [![Build Status](https://github.com/axetroy/bin2/workflows/ci/badge.svg)](https://github.com/axetroy/bin2/actions)
-[![Build Status](https://github.com/axetroy/bin2/workflows/playground/badge.svg)](https://github.com/axetroy/bin2/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/axetroy/bin2)](https://goreportcard.com/report/github.com/axetroy/bin2)
 ![Latest Version](https://img.shields.io/github/v/release/axetroy/bin2.svg)
 ![License](https://img.shields.io/github/license/axetroy/bin2.svg)
