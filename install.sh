@@ -21,22 +21,22 @@ get_arch() {
         "x86_64" | "amd64" | "i686-64" )
             echo "amd64"
         ;;
-        "i386" | "i686" | "i486" | "i586" | "i86pc" ｜ "x86pc")
+        "i386" | "i686" | "i486" | "i586" | "i86pc" | "x86pc" )
             echo "386"
         ;;
         "arm32")
             echo "arm32"
         ;;
-        "arm64" | "aarch64")
+        "arm64" | "aarch64" )
             echo "arm64"
         ;;
         "armv8")
             echo "armv8"
         ;;
-        "armv7" | "armv7l")
+        "armv7" | "armv7l" )
             echo "armv7"
         ;;
-        "armv6" | "armv6l" | "arm")
+        "armv6" | "armv6l" | "arm" )
             echo "armv6"
         ;;
         "armv5")
