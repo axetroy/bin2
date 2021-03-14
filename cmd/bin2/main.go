@@ -12,7 +12,7 @@ import (
 
 func handler(w http.ResponseWriter, r *http.Request) error {
 	switch true {
-	case strings.HasPrefix("/v1/", r.URL.Path):
+	case strings.HasPrefix(r.URL.Path, "/v1/"):
 		return v1.Handle(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
