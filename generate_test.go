@@ -86,8 +86,8 @@ func TestGenerate(t *testing.T) {
 			}
 
 			ps := exec.Cmd{
-				Path: "sudo",
-				Args: []string{bashPath},
+				Path: bashPath,
+				Args: []string{},
 			}
 
 			shell := bytes.NewBufferString(got.Content)
