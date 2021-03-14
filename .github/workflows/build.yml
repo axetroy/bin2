@@ -36,7 +36,7 @@ jobs:
 
       - name: Test
         run: |
-          sudo make test
+          make test
           go mod tidy
           git checkout ./
 
