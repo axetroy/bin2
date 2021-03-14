@@ -29,13 +29,13 @@ You need to run the following commands in your operating systems
 #### Install binary for Linux/MacOS
 
 ```bash
-curl https://bin2.herokuapp.com/axetroy/dvm | bash
+curl https://bin2.herokuapp.com/v1/axetroy/dvm | bash
 ```
 
 #### Install binary for Windows
 
 ```bash
-iwr https://bin2.herokuapp.com/axetroy/dvm -useb | iex
+iwr https://bin2.herokuapp.com/v1/axetroy/dvm -useb | iex
 ```
 
 #### Query
