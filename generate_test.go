@@ -21,7 +21,7 @@ func Test_getLatestRelease(t *testing.T) {
 		{
 			name:    "dvm",
 			args:    args{owner: "axetroy", repo: "dvm"},
-			want:    "v1.3.1",
+			want:    "v1.3.9",
 			wantErr: false,
 		},
 	}

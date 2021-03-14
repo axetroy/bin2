@@ -1,5 +1,4 @@
 test:
-	go version
 	go test --cover -covermode=count -coverprofile=coverage.out ./...
 
 build:
