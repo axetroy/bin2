@@ -2,7 +2,8 @@ package bin2
 
 import (
 	"bytes"
-	"errors"
+	_ "embed"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -10,6 +11,8 @@ import (
 	"path"
 	"regexp"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 type Script struct {
@@ -30,13 +33,19 @@ func isPowerShell(useragent string) bool {
 	return regexp.MustCompile(`PowerShell\/`).MatchString(useragent)
 }
 
+//go:embed install.sh
+var shellScript []byte
+
+//go:embed install.ps1
+var powerShellScript []byte
+
 func Generate(owner string, repo string, version string, binaryName string, userAgent string) (*Script, error) {
 	var (
-		err      error
-		filename = "install.sh"
+		err    error
+		script []byte
 	)
 
-	if !strings.HasPrefix(version, "v") {
+	if version != "" && !strings.HasPrefix(version, "v") {
 		version = "v" + version
 	}
 
@@ -44,10 +53,12 @@ func Generate(owner string, repo string, version string, binaryName string, user
 		binaryName = repo
 	}
 
-	if isCurl(userAgent) || isWget(userAgent) {
-		filename = "install.sh"
-	} else if isPowerShell(userAgent) {
-		filename = "install.ps1"
+	if isPowerShell(userAgent) {
+		script = powerShellScript
+	} else if isCurl(userAgent) || isWget(userAgent) {
+		script = shellScript
+	} else {
+		script = shellScript
 	}
 
 	// If no version is specified, the latest version is used
@@ -67,15 +78,9 @@ func Generate(owner string, repo string, version string, binaryName string, user
 		binaryName = repo
 	}
 
-	t := template.New(filename)
+	t := template.New("install")
 
-	b, err := ioutil.ReadFile(filename)
-
-	if err != nil {
-		return nil, err
-	}
-
-	t, err = t.Parse(string(b))
+	t, err = t.Parse(string(script))
 
 	if err != nil {
 		return nil, err
@@ -95,41 +100,48 @@ func Generate(owner string, repo string, version string, binaryName string, user
 	}
 
 	return &Script{
-		FileName: filename,
+		FileName: "install",
 		Content:  tpl.String(),
-		ExtName:  path.Ext(filename),
+		ExtName:  path.Ext("install"),
 	}, nil
 }
 
 func getLatestRelease(owner string, repo string) (string, error) {
-	var (
-		err error
-	)
-
-	url := fmt.Sprintf("https://github.com/%s/%s/releases", owner, repo)
-
-	res, err := http.Get(url)
+	res, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", owner, repo))
 
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "fetch remote version information fail")
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode >= http.StatusBadRequest {
+		return "", errors.New(fmt.Sprintf("fetch remote version information and get status code %d", res.StatusCode))
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "read from response body fail")
 	}
 
-	reg := regexp.MustCompile(fmt.Sprintf(`/%s/%s/releases/download/(.*)/.*\.tar.gz`, owner, repo))
-	// reg := regexp.MustCompile(fmt.Sprintf(`/%s/%s/releases/tag/v([a-z\d\.]+)`, owner, repo))
-
-	matchers := reg.FindStringSubmatch(string(body))
-
-	if len(matchers) == 0 {
-		return "", errors.New("not found latest version")
+	type Asset struct {
+		Name               string `json:"name"`
+		BrowserDownloadURL string `json:"browser_download_url"`
 	}
 
-	version := matchers[1]
+	type Response struct {
+		TagName string  `json:"tag_name"`
+		Assets  []Asset `json:"assets"`
+	}
+
+	response := Response{}
+
+	if err = json.Unmarshal(body, &response); err != nil {
+		return "", errors.Wrap(err, "unmarshal response body fail")
+	}
+
+	version := response.TagName
 
 	return version, nil
 }

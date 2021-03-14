@@ -38,6 +38,13 @@ curl https://bin2.herokuapp.com/axetroy/dvm | bash
 iwr https://bin2.herokuapp.com/axetroy/dvm -useb | iex
 ```
 
+#### Query
+
+| query | desc                                    |
+| ----- | --------------------------------------- |
+| v     | Specify version                         |
+| bin   | Specify the name of the executable file |
+
 ### How it works?
 
 Depending on the URL you visit with different tools, different content will be returned.
