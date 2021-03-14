@@ -41,11 +41,12 @@ func Test_getLatestRelease(t *testing.T) {
 
 func TestGenerate(t *testing.T) {
 	type args struct {
-		owner      string
-		repo       string
-		version    string
-		binaryName string
-		userAgent  string
+		owner        string
+		repo         string
+		version      string
+		binaryName   string
+		binaryFolder string
+		userAgent    string
 	}
 	tests := []struct {
 		name    string
@@ -57,11 +58,12 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "dvm",
 			args: args{
-				owner:      "axetroy",
-				repo:       "dvm",
-				version:    "v1.3.0",
-				binaryName: "dvm",
-				userAgent:  "curl/",
+				owner:        "axetroy",
+				repo:         "dvm",
+				version:      "v1.3.0",
+				binaryName:   "dvm",
+				binaryFolder: "./",
+				userAgent:    "curl/",
 			},
 			want: &Script{
 				FileName: "install.sh",
@@ -72,7 +74,7 @@ func TestGenerate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Generate(tt.args.owner, tt.args.repo, tt.args.version, tt.args.binaryName, tt.args.userAgent)
+			got, err := Generate(tt.args.owner, tt.args.repo, tt.args.version, tt.args.binaryName, tt.args.binaryFolder, tt.args.userAgent)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Generate() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -44,6 +44,7 @@ iwr https://bin2.herokuapp.com/axetroy/dvm -useb | iex
 | ----- | --------------------------------------- |
 | v     | Specify version                         |
 | bin   | Specify the name of the executable file |
+| dir   | Specify the path of binary folder       |
 
 ### How it works?
 

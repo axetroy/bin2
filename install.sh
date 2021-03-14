@@ -5,13 +5,23 @@ owner="{{ .Owner }}"
 repo="{{ .Repo }}"
 version="{{ .Version }}"
 binary="{{ .Binary }}"
+bin_dir="{{ .BinDir }}" # The executable file will finally be placed here
 
-# the file should be download to here
-downloadFolder="${HOME}/Downloads"
-# The executable file will finally be placed here
-binDir=/usr/local/bin
+download_folder="${HOME}/Downloads" # the file should be download to here
 
-mkdir -p ${downloadFolder}
+mkdir -p ${download_folder}
+
+if [ ! -d "$bin_dir" ]; then
+    mkdir -p "$bin_dir"
+fi
+
+if [ bin_dir -eq "" ]; then
+    bin_dir="/usr/local/bin"
+fi
+
+if [ ! -d "$download_folder" ]; then
+    mkdir -p "$download_folder"
+fi
 
 get_arch() {
     # https://man7.org/linux/man-pages/man1/uname.1.html
@@ -52,35 +62,40 @@ get_os(){
     echo $(uname -s | awk '{print tolower($0)}')
 }
 
+os=$(get_os)
+arch=$(get_arch)
+dest_file="${download_folder}/${binary}_${os}_${arch}.tar.gz"
+asset_uri="https://github.com/${owner}/${repo}/releases/download/${version}/${binary}_${os}_${arch}.tar.gz"
+
+function clean {
+    rm  -r ${dest_file}
+}
+
 main() {
-    local os=$(get_os)
-    local arch=$(get_arch)
-    local dest_file="${downloadFolder}/${binary}_${os}_${arch}.tar.gz"
-
-    asset_uri="https://github.com/${owner}/${repo}/releases/download/${version}/${binary}_${os}_${arch}.tar.gz"
-
-    mkdir -p ${downloadFolder}
-
-    echo "[1/3] Download ${asset_uri} to ${downloadFolder}"
+    mkdir -p ${download_folder}
+    
+    echo "[1/3] Download ${asset_uri} to ${download_folder}"
     rm -f ${dest_file}
     curl --location --output "${dest_file}" "${asset_uri}"
 
-    echo "[2/3] Install '${binary}' to the ${binDir}"
+    trap clean EXIT
+    
+    echo "[2/3] Install '${binary}' to the ${bin_dir}"
     mkdir -p ${HOME}/bin
-    tar -xz -f ${dest_file} -C ${binDir}
-    exe=${binDir}/${binary}
+    tar -xz -f ${dest_file} -C ${bin_dir}
+    exe=${bin_dir}/${binary}
     chmod +x ${exe}
-
+    
     echo "[3/3] Set environment variables"
     echo "${binary} was installed successfully to ${exe}"
     if command -v ${binary} --version >/dev/null; then
         echo "Run '${binary} --help' to get started"
     else
         echo "Manually add the directory to your \$HOME/.bash_profile (or similar)"
-        echo "  export PATH=${HOME}/bin:\$PATH"
+        echo "  export PATH=${bin_dir}:\$PATH"
         echo "Run '${binary} --help' to get started"
     fi
-
+    
     exit 0
 }
 

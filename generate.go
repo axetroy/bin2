@@ -39,7 +39,7 @@ var shellScript []byte
 //go:embed install.ps1
 var powerShellScript []byte
 
-func Generate(owner string, repo string, version string, binaryName string, userAgent string) (*Script, error) {
+func Generate(owner string, repo string, version string, binaryName string, binDir string, userAgent string) (*Script, error) {
 	var (
 		err    error
 		script []byte
@@ -93,6 +93,7 @@ func Generate(owner string, repo string, version string, binaryName string, user
 		"Repo":    repo,
 		"Version": version,
 		"Binary":  binaryName,
+		"BinDir":  binDir,
 	})
 
 	if err != nil {
