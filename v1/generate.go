@@ -2,7 +2,6 @@ package v1
 
 import (
 	"bytes"
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -12,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/axetroy/bin2/shell"
 	"github.com/pkg/errors"
 )
 
@@ -33,13 +33,7 @@ func isPowerShell(useragent string) bool {
 	return regexp.MustCompile(`PowerShell\/`).MatchString(useragent)
 }
 
-//go:embed install.sh
-var shellScript []byte
-
-//go:embed install.ps1
-var powerShellScript []byte
-
-func Generate(owner string, repo string, version string, binaryName string, binDir string, userAgent string) (*Script, error) {
+func generate(owner string, repo string, version string, binaryName string, binDir string, userAgent string) (*Script, error) {
 	var (
 		err    error
 		script []byte
@@ -54,11 +48,11 @@ func Generate(owner string, repo string, version string, binaryName string, binD
 	}
 
 	if isPowerShell(userAgent) {
-		script = powerShellScript
+		script = shell.PowerShellScript
 	} else if isCurl(userAgent) || isWget(userAgent) {
-		script = shellScript
+		script = shell.BashScript
 	} else {
-		script = shellScript
+		script = shell.BashScript
 	}
 
 	// If no version is specified, the latest version is used

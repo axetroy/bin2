@@ -3,8 +3,6 @@ package v1
 import (
 	"net/http"
 	"strings"
-
-	"github.com/axetroy/bin2"
 )
 
 func Handle(w http.ResponseWriter, r *http.Request) error {
@@ -26,7 +24,7 @@ func Handle(w http.ResponseWriter, r *http.Request) error {
 	repo := strings.Join(arr[1:], "/")
 	userAgent := r.Header.Get("user-agent")
 
-	script, err := bin2.Generate(owner, repo, version, binaryName, binDir, userAgent)
+	script, err := generate(owner, repo, version, binaryName, binDir, userAgent)
 
 	if err != nil {
 		return err
