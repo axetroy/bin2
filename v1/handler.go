@@ -13,7 +13,9 @@ func Handle(w http.ResponseWriter, r *http.Request) error {
 		binDir     = r.URL.Query().Get("dir")
 	)
 
-	arr := strings.Split(strings.Trim(r.URL.Path, "/v1"), "/")
+	urlPath := strings.Trim(r.URL.Path, "/v1/")
+
+	arr := strings.Split(urlPath, "/")
 
 	if len(arr) != 2 {
 		w.WriteHeader(http.StatusNotFound)
