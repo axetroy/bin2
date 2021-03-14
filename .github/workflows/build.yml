@@ -23,15 +23,11 @@ jobs:
           go version
           go env
 
-      - name: Install tools
-        env:
-          GO111MODULE: on
-        run: |
-          go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.27.0
-          golangci-lint --version
-
       - name: Lint
-        run: sudo make lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.37.0
+          args: -v
 
       - name: Format
         run: |
@@ -39,7 +35,7 @@ jobs:
 
       - name: Test
         run: |
-          make test
+          sudo make test
           go mod tidy
           git checkout ./
 
