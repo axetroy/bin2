@@ -23,12 +23,12 @@ jobs:
           go version
           go env
 
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.37.0
-          args: -v
-          skip-go-installation: true
+      # - name: Lint
+      #   uses: golangci/golangci-lint-action@v2
+      #   with:
+      #     version: v1.37.0
+      #     args: -v
+      #     skip-go-installation: true
 
       - name: Format
         run: |
