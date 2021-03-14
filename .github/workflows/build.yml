@@ -31,7 +31,7 @@ jobs:
           golangci-lint --version
 
       - name: Lint
-        run: make lint
+        run: sudo make lint
 
       - name: Format
         run: |
