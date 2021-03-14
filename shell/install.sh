@@ -9,14 +9,12 @@ bin_dir="{{ .BinDir }}" # The executable file will finally be placed here
 
 download_folder="${HOME}/Downloads" # the file should be download to here
 
-mkdir -p ${download_folder}
+if [ -z "$bin_dir" ]; then
+    bin_dir="/usr/local/bin"
+fi
 
 if [ ! -d "$bin_dir" ]; then
     mkdir -p "$bin_dir"
-fi
-
-if [ bin_dir -eq "" ]; then
-    bin_dir="/usr/local/bin"
 fi
 
 if [ ! -d "$download_folder" ]; then
